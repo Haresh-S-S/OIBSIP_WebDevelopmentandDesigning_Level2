@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard · SecureAuth</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Ambient background orbs (decorative, purely visual) -->
+  <div class="orb orb--one" aria-hidden="true"></div>
+  <div class="orb orb--two" aria-hidden="true"></div>
+  <div class="orb orb--three" aria-hidden="true"></div>
+
+  <!-- Toast notification container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <main class="auth-card dashboard-card" role="main">
+    <div class="avatar-ring" id="avatarInitial" aria-hidden="true">–</div>
+    <h1 class="welcome-heading" id="welcomeHeading">Welcome back</h1>
+    <p class="welcome-sub">Here's your account overview</p>
+
+    <ul class="info-list">
+      <li class="info-row">
+        <span class="info-row__label">Username</span>
+        <span class="info-row__value" id="usernameValue"><span class="skeleton"></span></span>
+      </li>
+      <li class="info-row">
+        <span class="info-row__label">Email</span>
+        <span class="info-row__value" id="emailValue"><span class="skeleton"></span></span>
+      </li>
+      <li class="info-row">
+        <span class="info-row__label">Login Time</span>
+        <span class="info-row__value" id="loginTimeValue"><span class="skeleton"></span></span>
+      </li>
+      <li class="info-row">
+        <span class="info-row__label">Member Since</span>
+        <span class="info-row__value" id="createdAtValue"><span class="skeleton"></span></span>
+      </li>
+    </ul>
+
+    <button type="button" class="btn btn--danger" id="logoutBtn">
+      <span class="spinner" aria-hidden="true"></span>
+      <span class="btn__label">Log out</span>
+    </button>
+  </main>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

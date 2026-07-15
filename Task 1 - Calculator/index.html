@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- =========================================================
+         HOME PAGE
+    ========================================================== -->
+    <section id="page-home" class="page page--home page--active" aria-label="Home">
+      <div class="hero">
+        <p class="hero__eyebrow">Welcome</p>
+        <h1 class="hero__title">Modern Calculator</h1>
+        <p class="hero__subtitle">Fast calculations, essential formulas, and a clean workspace—all in one place.</p>
+
+        <div class="hero__actions">
+          <button class="btn-large btn-large--primary" data-nav="calculator" type="button">
+            <span class="btn-large__icon" aria-hidden="true">🧮</span>
+            <span class="btn-large__text">
+              <span class="btn-large__label">Use Calculator</span>
+              <span class="btn-large__hint">Jump straight into calculations</span>
+            </span>
+          </button>
+
+          <button class="btn-large btn-large--secondary" data-nav="formulas" type="button">
+            <span class="btn-large__icon" aria-hidden="true">📘</span>
+            <span class="btn-large__text">
+              <span class="btn-large__label">Formula Cheat Sheet</span>
+              <span class="btn-large__hint">Arithmetic, geometry, trig &amp; more</span>
+            </span>
+          </button>
+
+          <button class="btn-large btn-large--tertiary" data-nav="history" type="button">
+            <span class="btn-large__icon" aria-hidden="true">🕓</span>
+            <span class="btn-large__text">
+              <span class="btn-large__label">View Calculation History</span>
+              <span class="btn-large__hint">Your last 15 calculations</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         CALCULATOR PAGE (existing calculator, untouched logic)
+    ========================================================== -->
+    <section id="page-calculator" class="page" aria-label="Calculator page">
+      <div class="page__toolbar">
+        <button class="btn-back" data-nav="home" type="button">← Back to Home</button>
+        <button class="btn-back btn-back--ghost" data-nav="history" type="button">History</button>
+      </div>
+
+      <main class="calculator" aria-label="Calculator">
+
+        <!-- Display -->
+        <section class="display" aria-live="polite">
+          <div class="display__expression" id="expression"></div>
+          <div class="display__current" id="current">0</div>
+        </section>
+
+        <!-- Keypad -->
+        <section class="keypad">
+
+          <button class="key key--clear" data-action="clear" type="button">C</button>
+          <button class="key key--clear" data-action="backspace" type="button" aria-label="Backspace">⌫</button>
+          <button class="key key--operator" data-action="operator" data-value="÷" type="button">÷</button>
+          <button class="key key--operator" data-action="operator" data-value="×" type="button">×</button>
+
+          <button class="key key--number" data-action="number" data-value="7" type="button">7</button>
+          <button class="key key--number" data-action="number" data-value="8" type="button">8</button>
+          <button class="key key--number" data-action="number" data-value="9" type="button">9</button>
+          <button class="key key--operator" data-action="operator" data-value="−" type="button">−</button>
+
+          <button class="key key--number" data-action="number" data-value="4" type="button">4</button>
+          <button class="key key--number" data-action="number" data-value="5" type="button">5</button>
+          <button class="key key--number" data-action="number" data-value="6" type="button">6</button>
+          <button class="key key--operator" data-action="operator" data-value="+" type="button">+</button>
+
+          <button class="key key--number" data-action="number" data-value="1" type="button">1</button>
+          <button class="key key--number" data-action="number" data-value="2" type="button">2</button>
+          <button class="key key--number" data-action="number" data-value="3" type="button">3</button>
+          <button class="key key--equals" data-action="equals" type="button">=</button>
+
+          <button class="key key--number key--zero" data-action="number" data-value="0" type="button">0</button>
+          <button class="key key--number" data-action="decimal" data-value="." type="button">.</button>
+
+        </section>
+
+      </main>
+    </section>
+
+    <!-- =========================================================
+         FORMULA CHEAT SHEET PAGE
+    ========================================================== -->
+    <section id="page-formulas" class="page" aria-label="Formula cheat sheet">
+      <div class="page__toolbar">
+        <button class="btn-back" data-nav="home" type="button">← Back to Home</button>
+      </div>
+
+      <div class="page__header">
+        <h2>Formula Cheat Sheet</h2>
+        <p>A quick reference for the formulas you reach for most.</p>
+      </div>
+
+      <div class="formula-grid">
+
+        <!-- Arithmetic -->
+        <article class="formula-card">
+          <h3 class="formula-card__title">Arithmetic</h3>
+          <ul class="formula-list">
+            <li><span class="formula-name">Percentage</span><span class="formula-expr">(Value ÷ Total) × 100</span></li>
+            <li><span class="formula-name">Average</span><span class="formula-expr">Sum of terms ÷ Number of terms</span></li>
+            <li><span class="formula-name">Ratio</span><span class="formula-expr">a : b = a ÷ b</span></li>
+            <li><span class="formula-name">Proportion</span><span class="formula-expr">a : b = c : d ⇒ a×d = b×c</span></li>
+            <li><span class="formula-name">Simple Interest</span><span class="formula-expr">SI = (P × R × T) ÷ 100</span></li>
+            <li><span class="formula-name">Compound Interest</span><span class="formula-expr">CI = P(1 + R/100)ⁿ − P</span></li>
+          </ul>
+        </article>
+
+        <!-- Profit & Loss -->
+        <article class="formula-card">
+          <h3 class="formula-card__title">Profit &amp; Loss</h3>
+          <ul class="formula-list">
+            <li><span class="formula-name">Profit</span><span class="formula-expr">SP − CP</span></li>
+            <li><span class="formula-name">Loss</span><span class="formula-expr">CP − SP</span></li>
+            <li><span class="formula-name">Profit %</span><span class="formula-expr">(Profit ÷ CP) × 100</span></li>
+            <li><span class="formula-name">Loss %</span><span class="formula-expr">(Loss ÷ CP) × 100</span></li>
+            <li><span class="formula-name">Discount %</span><span class="formula-expr">(Discount ÷ MP) × 100</span></li>
+            <li><span class="formula-name">Selling Price</span><span class="formula-expr">CP + Profit, or MP − Discount</span></li>
+            <li><span class="formula-name">Cost Price</span><span class="formula-expr">SP − Profit, or SP + Loss</span></li>
+            <li><span class="formula-name">Marked Price</span><span class="formula-expr">SP + Discount</span></li>
+          </ul>
+        </article>
+
+        <!-- Trigonometry -->
+        <article class="formula-card formula-card--wide">
+          <h3 class="formula-card__title">Trigonometry</h3>
+          <ul class="formula-list formula-list--compact">
+            <li><span class="formula-name">sin θ</span><span class="formula-expr">Opposite ÷ Hypotenuse</span></li>
+            <li><span class="formula-name">cos θ</span><span class="formula-expr">Adjacent ÷ Hypotenuse</span></li>
+            <li><span class="formula-name">tan θ</span><span class="formula-expr">Opposite ÷ Adjacent</span></li>
+            <li><span class="formula-name">cosec θ</span><span class="formula-expr">1 ÷ sin θ</span></li>
+            <li><span class="formula-name">sec θ</span><span class="formula-expr">1 ÷ cos θ</span></li>
+            <li><span class="formula-name">cot θ</span><span class="formula-expr">1 ÷ tan θ</span></li>
+          </ul>
+
+          <div class="trig-table-wrap">
+            <table class="trig-table">
+              <thead>
+                <tr>
+                  <th>θ</th><th>0°</th><th>30°</th><th>45°</th><th>60°</th><th>90°</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>sin</td><td>0</td><td>1/2</td><td>1/√2</td><td>√3/2</td><td>1</td></tr>
+                <tr><td>cos</td><td>1</td><td>√3/2</td><td>1/√2</td><td>1/2</td><td>0</td></tr>
+                <tr><td>tan</td><td>0</td><td>1/√3</td><td>1</td><td>√3</td><td>∞</td></tr>
+                <tr><td>cosec</td><td>∞</td><td>2</td><td>√2</td><td>2/√3</td><td>1</td></tr>
+                <tr><td>sec</td><td>1</td><td>2/√3</td><td>√2</td><td>2</td><td>∞</td></tr>
+                <tr><td>cot</td><td>∞</td><td>√3</td><td>1</td><td>1/√3</td><td>0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- Mensuration: 2D -->
+        <article class="formula-card formula-card--wide">
+          <h3 class="formula-card__title">Mensuration — 2D Shapes</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Shape</th><th>Area</th><th>Perimeter</th></tr></thead>
+              <tbody>
+                <tr><td>Square</td><td>side²</td><td>4 × side</td></tr>
+                <tr><td>Rectangle</td><td>length × breadth</td><td>2 × (length + breadth)</td></tr>
+                <tr><td>Circle</td><td>π × r²</td><td>2 × π × r</td></tr>
+                <tr><td>Triangle</td><td>½ × base × height</td><td>a + b + c</td></tr>
+                <tr><td>Parallelogram</td><td>base × height</td><td>2 × (a + b)</td></tr>
+                <tr><td>Rhombus</td><td>½ × d₁ × d₂</td><td>4 × side</td></tr>
+                <tr><td>Trapezium</td><td>½ × (a + b) × height</td><td>sum of all sides</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- Mensuration: 3D -->
+        <article class="formula-card formula-card--wide">
+          <h3 class="formula-card__title">Mensuration — 3D Shapes</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Shape</th><th>Volume</th><th>Curved Surface Area</th><th>Total Surface Area</th></tr></thead>
+              <tbody>
+                <tr><td>Cube</td><td>side³</td><td>—</td><td>6 × side²</td></tr>
+                <tr><td>Cuboid</td><td>l × b × h</td><td>—</td><td>2(lb + bh + hl)</td></tr>
+                <tr><td>Cylinder</td><td>π × r² × h</td><td>2 × π × r × h</td><td>2πr(r + h)</td></tr>
+                <tr><td>Cone</td><td>⅓ × π × r² × h</td><td>π × r × l</td><td>πr(r + l)</td></tr>
+                <tr><td>Sphere</td><td>4/3 × π × r³</td><td>4 × π × r²</td><td>4 × π × r²</td></tr>
+                <tr><td>Hemisphere</td><td>2/3 × π × r³</td><td>2 × π × r²</td><td>3 × π × r²</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- Algebra -->
+        <article class="formula-card">
+          <h3 class="formula-card__title">Algebra</h3>
+          <ul class="formula-list">
+            <li><span class="formula-name">(a+b)²</span><span class="formula-expr">a² + 2ab + b²</span></li>
+            <li><span class="formula-name">(a−b)²</span><span class="formula-expr">a² − 2ab + b²</span></li>
+            <li><span class="formula-name">a² − b²</span><span class="formula-expr">(a+b)(a−b)</span></li>
+            <li><span class="formula-name">(a+b)³</span><span class="formula-expr">a³ + 3a²b + 3ab² + b³</span></li>
+            <li><span class="formula-name">(a−b)³</span><span class="formula-expr">a³ − 3a²b + 3ab² − b³</span></li>
+            <li><span class="formula-name">Quadratic Formula</span><span class="formula-expr">x = (−b ± √(b²−4ac)) ÷ 2a</span></li>
+          </ul>
+        </article>
+
+        <!-- Speed Time Distance -->
+        <article class="formula-card">
+          <h3 class="formula-card__title">Speed, Time &amp; Distance</h3>
+          <ul class="formula-list">
+            <li><span class="formula-name">Speed</span><span class="formula-expr">Distance ÷ Time</span></li>
+            <li><span class="formula-name">Distance</span><span class="formula-expr">Speed × Time</span></li>
+            <li><span class="formula-name">Time</span><span class="formula-expr">Distance ÷ Speed</span></li>
+          </ul>
+        </article>
+
+        <!-- Unit Conversions -->
+        <article class="formula-card formula-card--wide">
+          <h3 class="formula-card__title">Unit Conversions</h3>
+
+          <div class="conversion-group">
+            <h4 class="conversion-group__title">Length</h4>
+            <div class="table-wrap">
+              <table class="data-table">
+                <tbody>
+                  <tr><td>1 kilometre</td><td>1000 metres</td></tr>
+                  <tr><td>1 metre</td><td>100 centimetres</td></tr>
+                  <tr><td>1 centimetre</td><td>10 millimetres</td></tr>
+                  <tr><td>1 mile</td><td>1.60934 kilometres</td></tr>
+                  <tr><td>1 inch</td><td>2.54 centimetres</td></tr>
+                  <tr><td>1 foot</td><td>12 inches</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="conversion-group">
+            <h4 class="conversion-group__title">Weight</h4>
+            <div class="table-wrap">
+              <table class="data-table">
+                <tbody>
+                  <tr><td>1 kilogram</td><td>1000 grams</td></tr>
+                  <tr><td>1 gram</td><td>1000 milligrams</td></tr>
+                  <tr><td>1 metric ton</td><td>1000 kilograms</td></tr>
+                  <tr><td>1 pound</td><td>0.4536 kilograms</td></tr>
+                  <tr><td>1 ounce</td><td>28.35 grams</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="conversion-group">
+            <h4 class="conversion-group__title">Temperature</h4>
+            <div class="table-wrap">
+              <table class="data-table">
+                <tbody>
+                  <tr><td>°C to °F</td><td>(°C × 9/5) + 32</td></tr>
+                  <tr><td>°F to °C</td><td>(°F − 32) × 5/9</td></tr>
+                  <tr><td>°C to K</td><td>°C + 273.15</td></tr>
+                  <tr><td>K to °C</td><td>K − 273.15</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- =========================================================
+         CALCULATION HISTORY PAGE
+    ========================================================== -->
+    <section id="page-history" class="page" aria-label="Calculation history">
+      <div class="page__toolbar">
+        <button class="btn-back" data-nav="home" type="button">← Back to Home</button>
+        <button class="btn-back btn-back--danger" id="clearHistoryBtn" type="button">Clear History</button>
+      </div>
+
+      <div class="page__header">
+        <h2>Calculation History</h2>
+        <p>Your latest 15 calculations, newest first.</p>
+      </div>
+
+      <div class="history-list" id="historyList">
+        <!-- Populated dynamically by script.js -->
+      </div>
+
+      <p class="history-empty" id="historyEmpty">No calculations yet. Head to the calculator and try one!</p>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

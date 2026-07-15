@@ -1,0 +1,794 @@
+/* =========================================================
+   DESIGN TOKENS
+   Palette: deep indigo-to-ink gradient backdrop, frosted glass
+   panel, violet accent for operators, mint for equals, coral
+   for destructive (clear/backspace) actions.
+   Display digits use a monospace face for an authentic
+   calculator "readout" feel; UI chrome uses a grotesk sans.
+========================================================= */
+:root {
+  --bg-1: #0f0c29;
+  --bg-2: #24243e;
+  --bg-3: #1b1730;
+
+  --glass-fill: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.25);
+
+  --ink-primary: #f2f0f9;
+  --ink-muted: rgba(242, 240, 249, 0.55);
+
+  --accent-violet: #8c6bff;
+  --accent-violet-strong: #7c5cff;
+  --accent-mint: #23d9a5;
+  --accent-mint-strong: #17c093;
+  --accent-coral: #ff6b7a;
+  --accent-coral-strong: #ff4f63;
+
+  --key-number-bg: rgba(255, 255, 255, 0.07);
+  --key-number-bg-hover: rgba(255, 255, 255, 0.12);
+
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", monospace;
+
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --shadow-deep: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+}
+
+/* =========================================================
+   RESET & BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  padding: 24px;
+  font-family: var(--font-display);
+  background:
+    radial-gradient(circle at 18% 20%, rgba(140, 107, 255, 0.25), transparent 45%),
+    radial-gradient(circle at 82% 78%, rgba(35, 217, 165, 0.16), transparent 40%),
+    linear-gradient(160deg, var(--bg-1), var(--bg-2) 55%, var(--bg-3));
+  background-attachment: fixed;
+  color: var(--ink-primary);
+}
+
+/* =========================================================
+   APP SHELL & PAGE SWITCHING
+   Each "page" is a full-viewport flex container. Only the
+   page carrying .page--active is shown; JS toggles the class
+   with no page reloads.
+========================================================= */
+.app-shell {
+  width: 100%;
+}
+
+.page {
+  display: none;
+  width: 100%;
+  min-height: calc(100vh - 48px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.page--active {
+  display: flex;
+  animation: pageFadeIn 0.5s ease both;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Toolbar shared by calculator / formulas / history pages */
+.page__toolbar {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.page__header {
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.page__header h2 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  background: linear-gradient(120deg, var(--ink-primary), var(--accent-violet) 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.page__header p {
+  margin-top: 6px;
+  color: var(--ink-muted);
+  font-size: 0.98rem;
+}
+
+/* Back / utility buttons used across sub-pages */
+.btn-back {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  color: var(--ink-primary);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-back:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.5);
+}
+
+.btn-back:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.btn-back--ghost {
+  background: linear-gradient(160deg, rgba(140, 107, 255, 0.28), rgba(124, 92, 255, 0.14));
+  border-color: rgba(140, 107, 255, 0.35);
+  color: #d9cfff;
+}
+
+.btn-back--danger {
+  background: linear-gradient(160deg, rgba(255, 107, 122, 0.28), rgba(255, 79, 99, 0.14));
+  border-color: rgba(255, 107, 122, 0.35);
+  color: #ffd2d7;
+}
+
+.btn-back--danger:hover {
+  box-shadow: 0 8px 20px -10px rgba(255, 107, 122, 0.6);
+}
+
+/* =========================================================
+   HOME PAGE — hero + big navigation buttons
+========================================================= */
+.page--home {
+  gap: 0;
+}
+
+.hero {
+  width: 100%;
+  max-width: 640px;
+  text-align: center;
+  padding: 48px 32px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-deep), inset 0 1px 0 var(--glass-highlight);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  animation: slideUp 0.6s ease both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-violet);
+  margin-bottom: 10px;
+}
+
+.hero__title {
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  background: linear-gradient(120deg, var(--ink-primary), var(--accent-mint) 70%, var(--accent-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 40px rgba(140, 107, 255, 0.25);
+}
+
+.hero__subtitle {
+  margin: 16px auto 0;
+  max-width: 460px;
+  color: var(--ink-muted);
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+
+.hero__actions {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.btn-large {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink-primary);
+  font-family: var(--font-display);
+  transition: transform 0.18s ease, box-shadow 0.25s ease, background 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-large:hover {
+  transform: translateY(-3px);
+}
+
+.btn-large:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+.btn-large__icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-large__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.btn-large__label {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.btn-large__hint {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+}
+
+.btn-large--primary {
+  background: linear-gradient(160deg, rgba(35, 217, 165, 0.24), rgba(23, 192, 147, 0.12));
+  border-color: rgba(35, 217, 165, 0.35);
+}
+
+.btn-large--primary:hover {
+  box-shadow: 0 14px 30px -14px rgba(35, 217, 165, 0.55);
+}
+
+.btn-large--secondary {
+  background: linear-gradient(160deg, rgba(140, 107, 255, 0.24), rgba(124, 92, 255, 0.12));
+  border-color: rgba(140, 107, 255, 0.35);
+}
+
+.btn-large--secondary:hover {
+  box-shadow: 0 14px 30px -14px rgba(140, 107, 255, 0.55);
+}
+
+.btn-large--tertiary {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.btn-large--tertiary:hover {
+  box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================================
+   FORMULA CHEAT SHEET
+========================================================= */
+.formula-grid {
+  width: 100%;
+  max-width: 1080px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  padding-bottom: 12px;
+}
+
+.formula-card {
+  padding: 22px;
+  border-radius: var(--radius-md);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-deep), inset 0 1px 0 var(--glass-highlight);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.formula-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 50px -18px rgba(0, 0, 0, 0.55), inset 0 1px 0 var(--glass-highlight);
+}
+
+.formula-card--wide {
+  grid-column: span 2;
+}
+
+@media (max-width: 720px) {
+  .formula-card--wide {
+    grid-column: span 1;
+  }
+}
+
+.formula-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-mint);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.formula-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formula-list--compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 18px;
+}
+
+.formula-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.formula-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--ink-primary);
+}
+
+.formula-expr {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.table-wrap,
+.trig-table-wrap {
+  overflow-x: auto;
+}
+
+.data-table,
+.trig-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.data-table th,
+.data-table td,
+.trig-table th,
+.trig-table td {
+  padding: 9px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.data-table th,
+.trig-table th {
+  color: var(--accent-violet);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.trig-table td:first-child {
+  color: var(--accent-mint);
+  font-weight: 600;
+}
+
+.conversion-group {
+  margin-top: 16px;
+}
+
+.conversion-group:first-of-type {
+  margin-top: 4px;
+}
+
+.conversion-group__title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  margin-bottom: 8px;
+}
+
+/* =========================================================
+   CALCULATION HISTORY
+========================================================= */
+.history-list {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  animation: slideUp 0.35s ease both;
+}
+
+.history-item__main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.history-item__expression {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.history-item__result {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--accent-mint);
+}
+
+.history-item__time {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+
+.history-item__delete {
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 107, 122, 0.35);
+  background: rgba(255, 107, 122, 0.14);
+  color: #ffd2d7;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.history-item__delete:hover {
+  background: rgba(255, 107, 122, 0.28);
+  transform: scale(1.06);
+}
+
+.history-empty {
+  display: none;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 20px;
+}
+
+.history-empty.is-visible {
+  display: block;
+}
+
+/* =========================================================
+   RESPONSIVE (page system additions)
+========================================================= */
+@media (max-width: 480px) {
+  .hero {
+    padding: 34px 20px;
+  }
+
+  .btn-large {
+    padding: 14px 16px;
+  }
+
+  .page__toolbar {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page--active,
+  .hero,
+  .formula-card,
+  .history-item {
+    animation: none;
+  }
+}
+
+/* =========================================================
+   CALCULATOR SHELL — glassmorphism panel
+========================================================= */
+.calculator {
+  width: 100%;
+  max-width: 360px;
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    var(--shadow-deep),
+    inset 0 1px 0 var(--glass-highlight);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+}
+
+/* =========================================================
+   DISPLAY
+========================================================= */
+.display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 26px 18px 20px;
+  margin-bottom: 18px;
+  min-height: 108px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.display__expression {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.02em;
+  min-height: 1.2em;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.display__current {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 2.6rem;
+  line-height: 1.1;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  text-align: right;
+  text-shadow: 0 0 22px rgba(140, 107, 255, 0.35);
+  transition: font-size 0.15s ease;
+}
+
+.display__current.is-error {
+  font-size: 1.3rem;
+  color: var(--accent-coral);
+  text-shadow: 0 0 18px rgba(255, 107, 122, 0.35);
+}
+
+/* narrow scrollbars inside the readout, kept subtle */
+.display__expression::-webkit-scrollbar,
+.display__current::-webkit-scrollbar {
+  height: 4px;
+}
+.display__expression::-webkit-scrollbar-thumb,
+.display__current::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* =========================================================
+   KEYPAD — CSS Grid
+========================================================= */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 64px;
+  gap: 12px;
+}
+
+/* =========================================================
+   KEYS — base styling shared by all buttons
+========================================================= */
+.key {
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink-primary);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key:hover {
+  transform: translateY(-2px);
+}
+
+.key:active {
+  transform: translateY(0) scale(0.94);
+}
+
+/* soft focus ring for keyboard/accessibility, no layout shift */
+.key:focus-visible {
+  outline: 2px solid var(--accent-violet);
+  outline-offset: 2px;
+}
+
+/* subtle press ripple using an ::after glow, purely CSS */
+.key::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.35), transparent 60%);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+
+.key:active::after {
+  opacity: 1;
+  transform: scale(1.3);
+  transition: 0s;
+}
+
+/* Numbers */
+.key--number {
+  background: var(--key-number-bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.key--number:hover {
+  background: var(--key-number-bg-hover);
+}
+
+/* Operators (÷ × − +) */
+.key--operator {
+  background: linear-gradient(160deg, rgba(140, 107, 255, 0.28), rgba(124, 92, 255, 0.14));
+  border: 1px solid rgba(140, 107, 255, 0.35);
+  color: #d9cfff;
+}
+
+.key--operator:hover {
+  background: linear-gradient(160deg, rgba(140, 107, 255, 0.4), rgba(124, 92, 255, 0.2));
+  box-shadow: 0 8px 20px -8px rgba(140, 107, 255, 0.6);
+}
+
+.key--operator.is-active {
+  background: var(--accent-violet-strong);
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(140, 107, 255, 0.5), 0 8px 20px -6px rgba(124, 92, 255, 0.7);
+}
+
+/* Equals */
+.key--equals {
+  grid-row: span 2;
+  background: linear-gradient(160deg, var(--accent-mint), var(--accent-mint-strong));
+  color: #04231b;
+  font-size: 1.4rem;
+  box-shadow: 0 10px 24px -10px rgba(35, 217, 165, 0.65);
+}
+
+.key--equals:hover {
+  box-shadow: 0 12px 28px -8px rgba(35, 217, 165, 0.8);
+}
+
+/* Clear + Backspace */
+.key--clear {
+  background: linear-gradient(160deg, rgba(255, 107, 122, 0.28), rgba(255, 79, 99, 0.14));
+  border: 1px solid rgba(255, 107, 122, 0.35);
+  color: #ffd2d7;
+  font-size: 1rem;
+}
+
+.key--clear:hover {
+  background: linear-gradient(160deg, rgba(255, 107, 122, 0.4), rgba(255, 79, 99, 0.2));
+  box-shadow: 0 8px 20px -8px rgba(255, 107, 122, 0.6);
+}
+
+/* Zero spans two columns to match the classic keypad shape */
+.key--zero {
+  grid-column: span 2;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 420px) {
+  .calculator {
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  .keypad {
+    grid-auto-rows: 56px;
+    gap: 9px;
+  }
+
+  .key {
+    font-size: 1rem;
+  }
+
+  .display__current {
+    font-size: 2.1rem;
+  }
+}
+
+@media (min-width: 700px) {
+  .calculator {
+    max-width: 380px;
+    padding: 26px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .key,
+  .key::after {
+    transition: none;
+  }
+}

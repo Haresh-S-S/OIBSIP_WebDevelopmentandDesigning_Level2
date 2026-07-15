@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My To-Do List — Stay Organized</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background ambience layer -->
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <div class="app" id="app">
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="app-header">
+      <div class="ticket-perf" aria-hidden="true"></div>
+      <h1 class="app-title">My To-Do List</h1>
+      <p class="app-subtitle">Stay organized. Stay productive.</p>
+
+      <button
+        class="theme-toggle"
+        id="themeToggle"
+        type="button"
+        aria-label="Toggle dark mode"
+        aria-pressed="false"
+      >
+        <span id="themeIcon">🌙</span>
+      </button>
+    </header>
+
+    <!-- ===================== INPUT ROW ===================== -->
+    <section class="input-dock" aria-label="Add a new task">
+      <div class="input-row">
+        <input
+          type="text"
+          id="taskInput"
+          class="task-input"
+          placeholder="What needs doing?"
+          aria-label="New task text"
+          maxlength="140"
+        />
+        <button id="addTaskBtn" class="btn btn-primary" type="button" aria-label="Add task">
+          <span class="btn-plus">+</span> Add Task
+        </button>
+      </div>
+      <p class="input-hint" id="inputHint" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ===================== TOOLBAR (search / filter / sort) ===================== -->
+    <section class="toolbar" aria-label="Search, filter and sort tasks">
+      <input
+        type="search"
+        id="searchInput"
+        class="search-input"
+        placeholder="Search tasks…"
+        aria-label="Search tasks"
+      />
+
+      <div class="filter-group" role="group" aria-label="Filter tasks">
+        <button class="chip active" data-filter="all" type="button">All</button>
+        <button class="chip" data-filter="pending" type="button">Pending</button>
+        <button class="chip" data-filter="completed" type="button">Completed</button>
+      </div>
+
+      <select id="sortSelect" class="sort-select" aria-label="Sort tasks">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+      </select>
+    </section>
+
+    <!-- ===================== TASK LISTS ===================== -->
+    <main class="board">
+
+      <!-- PENDING COLUMN -->
+      <section class="column" aria-labelledby="pendingHeading">
+        <div class="column-header">
+          <h2 id="pendingHeading">
+            Pending <span class="count-badge" id="pendingCount">(0)</span>
+          </h2>
+        </div>
+        <ul class="task-list" id="pendingList" aria-live="polite"></ul>
+        <p class="empty-state" id="pendingEmpty">No pending tasks. Enjoy your day! ☀️</p>
+      </section>
+
+      <!-- COMPLETED COLUMN -->
+      <section class="column" aria-labelledby="completedHeading">
+        <div class="column-header">
+          <h2 id="completedHeading">
+            Completed <span class="count-badge" id="completedCount">(0)</span>
+          </h2>
+          <button
+            id="clearCompletedBtn"
+            class="btn btn-ghost btn-small"
+            type="button"
+            aria-label="Clear all completed tasks"
+          >
+            Clear all
+          </button>
+        </div>
+        <ul class="task-list" id="completedList" aria-live="polite"></ul>
+        <p class="empty-state" id="completedEmpty">No completed tasks yet.</p>
+      </section>
+
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="app-footer">
+      <span id="totalCount">0 tasks total</span>
+    </footer>
+
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

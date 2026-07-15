@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account · SecureAuth</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Ambient background orbs (decorative, purely visual) -->
+  <div class="orb orb--one" aria-hidden="true"></div>
+  <div class="orb orb--two" aria-hidden="true"></div>
+  <div class="orb orb--three" aria-hidden="true"></div>
+
+  <!-- Toast notification container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <main class="auth-card" role="main">
+    <div class="logo">
+      <div class="logo__mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2L4 5v6c0 5.25 3.4 9.74 8 11 4.6-1.26 8-5.75 8-11V5l-8-3z" fill="white" fill-opacity="0.95"/>
+        </svg>
+      </div>
+      <span class="logo__text">SecureAuth</span>
+    </div>
+
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-subtitle">Join us in a few quick steps</p>
+
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-input"
+            placeholder="Choose a username"
+            autocomplete="username"
+            aria-describedby="usernameError"
+            aria-required="true"
+          />
+        </div>
+        <span class="field-error" id="usernameError" role="alert"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-input"
+            placeholder="you@example.com"
+            autocomplete="email"
+            aria-describedby="emailError"
+            aria-required="true"
+          />
+        </div>
+        <span class="field-error" id="emailError" role="alert"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-input"
+            placeholder="Create a strong password"
+            autocomplete="new-password"
+            aria-describedby="passwordError passwordHint"
+            aria-required="true"
+          />
+          <button type="button" class="toggle-visibility" id="togglePassword" aria-label="Show password">
+            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+          </button>
+        </div>
+        <span class="field-error" id="passwordHint" style="color: var(--text-muted);">
+          Min. 8 characters, 1 uppercase, 1 lowercase, 1 number
+        </span>
+        <span class="field-error" id="passwordError" role="alert"></span>
+      </div>
+
+      <button type="submit" class="btn" id="registerBtn">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="btn__label">Create account</span>
+      </button>
+    </form>
+
+    <p class="auth-link">
+      Already have an account? <a href="login.html">Log in</a>
+    </p>
+  </main>
+
+  <script src="js/register.js"></script>
+</body>
+</html>

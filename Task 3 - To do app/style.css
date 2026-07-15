@@ -1,0 +1,564 @@
+/* ============================================================
+   MY TO-DO LIST — STYLESHEET
+   Design concept: a "ticket dispenser" — tasks are printed as
+   perforated ticket stubs. Completing a task stamps it "DONE"
+   and moves it to the receipt pile on the right.
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
+:root {
+  /* Color: night-dispenser palette */
+  --bg-1: #1b1f3b;
+  --bg-2: #3a1f5d;
+  --paper: #f7f3e9;
+  --paper-dim: #efe9da;
+  --ink: #22223b;
+  --ink-soft: #5a5a72;
+  --accent-pending: #ff6b4a;
+  --accent-pending-dark: #e05537;
+  --accent-done: #2f9e94;
+  --accent-done-dark: #1f7a72;
+  --accent-delete: #e63946;
+  --muted: #9a94b5;
+  --hairline: rgba(34, 34, 59, 0.12);
+
+  /* Type */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Layout */
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 20px 50px -20px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 10px 24px -12px rgba(22, 15, 45, 0.35);
+
+  --transition-fast: 150ms ease;
+  --transition-med: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Dark mode overrides (toggled via body.dark-mode) */
+body.dark-mode {
+  --paper: #23263f;
+  --paper-dim: #1b1e33;
+  --ink: #f1efe4;
+  --ink-soft: #b6b3cc;
+  --hairline: rgba(241, 239, 228, 0.12);
+}
+
+/* ---------- Reset & base ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  background-attachment: fixed;
+  position: relative;
+  overflow-x: hidden;
+  transition: background var(--transition-med);
+}
+
+/* Ambient glow behind the app card */
+.bg-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 107, 74, 0.18), transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(47, 158, 148, 0.18), transparent 45%);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--accent-done);
+  outline-offset: 2px;
+}
+
+input,
+select {
+  font-family: inherit;
+}
+
+/* ---------- App shell ---------- */
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 48px auto;
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: 0 0 32px;
+  overflow: hidden;
+  transition: background var(--transition-med);
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  position: relative;
+  text-align: center;
+  padding: 40px 32px 28px;
+  background: linear-gradient(135deg, var(--accent-pending) 0%, #ff8f6b 100%);
+  color: #fff9f3;
+}
+
+/* Perforation strip mimicking a torn ticket edge */
+.ticket-perf {
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background-image: radial-gradient(circle, var(--paper) 8px, transparent 8.5px);
+  background-size: 28px 16px;
+  background-position: 0 -8px;
+  background-repeat: repeat-x;
+}
+
+.app-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.app-subtitle {
+  margin-top: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.92;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: rotate(15deg) scale(1.05);
+}
+
+/* ---------- Input dock ---------- */
+.input-dock {
+  padding: 28px 32px 8px;
+}
+
+.input-row {
+  display: flex;
+  gap: 12px;
+}
+
+.task-input {
+  flex: 1;
+  padding: 14px 18px;
+  font-size: 1rem;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--hairline);
+  background: var(--paper-dim);
+  color: var(--ink);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.task-input::placeholder {
+  color: var(--muted);
+}
+
+.task-input:focus-visible {
+  border-color: var(--accent-pending);
+}
+
+.btn {
+  padding: 14px 22px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: var(--accent-pending);
+  color: #fff9f3;
+  box-shadow: 0 8px 18px -8px rgba(255, 107, 74, 0.6);
+}
+
+.btn-primary:hover {
+  background: var(--accent-pending-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px -8px rgba(255, 107, 74, 0.65);
+}
+
+.btn-plus {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1.5px solid var(--hairline);
+}
+
+.btn-ghost:hover {
+  color: var(--accent-delete);
+  border-color: var(--accent-delete);
+}
+
+.btn-small {
+  padding: 8px 14px;
+  font-size: 0.8rem;
+}
+
+.input-hint {
+  min-height: 20px;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--accent-delete);
+  font-weight: 500;
+}
+
+/* ---------- Toolbar ---------- */
+.toolbar {
+  padding: 8px 32px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px dashed var(--hairline);
+}
+
+.search-input {
+  flex: 1;
+  min-width: 160px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--hairline);
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.filter-group {
+  display: flex;
+  gap: 6px;
+}
+
+.chip {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  border: 1.5px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.chip:hover {
+  border-color: var(--accent-pending);
+}
+
+.chip.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.sort-select {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--hairline);
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-size: 0.85rem;
+}
+
+/* ---------- Board / columns ---------- */
+.board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 24px 32px 0;
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.column-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.count-badge {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.88rem;
+  padding: 22px 10px;
+  border: 1.5px dashed var(--hairline);
+  border-radius: var(--radius-md);
+  margin-top: 4px;
+}
+
+/* ---------- Task cards (ticket stubs) ---------- */
+.task-card {
+  position: relative;
+  background: var(--paper-dim);
+  border-radius: var(--radius-md);
+  padding: 14px 16px 14px 22px;
+  box-shadow: var(--shadow-card);
+  border-left: 4px solid var(--accent-pending);
+  animation: cardIn var(--transition-med);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.task-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px -14px rgba(22, 15, 45, 0.4);
+}
+
+.task-card.completed {
+  border-left-color: var(--accent-done);
+  background: var(--paper);
+  opacity: 0.85;
+}
+
+.task-card.removing {
+  animation: cardOut var(--transition-med) forwards;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cardOut {
+  to {
+    opacity: 0;
+    transform: translateX(24px) scale(0.9);
+  }
+}
+
+.task-text {
+  font-size: 0.98rem;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.task-card.completed .task-text {
+  text-decoration: line-through;
+  color: var(--ink-soft);
+}
+
+.task-meta {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.done-stamp {
+  color: var(--accent-done);
+  font-weight: 600;
+}
+
+.task-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1.5px solid var(--hairline);
+  color: var(--ink-soft);
+  transition: all var(--transition-fast);
+}
+
+.icon-btn:hover {
+  transform: translateY(-1px);
+}
+
+.icon-btn.complete:hover {
+  border-color: var(--accent-done);
+  color: var(--accent-done-dark);
+  background: rgba(47, 158, 148, 0.1);
+}
+
+.icon-btn.edit:hover {
+  border-color: var(--accent-pending);
+  color: var(--accent-pending-dark);
+  background: rgba(255, 107, 74, 0.1);
+}
+
+.icon-btn.delete:hover {
+  border-color: var(--accent-delete);
+  color: var(--accent-delete);
+  background: rgba(230, 57, 70, 0.1);
+}
+
+.edit-input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--accent-pending);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ---------- Footer ---------- */
+.app-footer {
+  margin-top: 28px;
+  padding: 16px 32px 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+  border-top: 1px dashed var(--hairline);
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-med), transform var(--transition-med);
+  z-index: 20;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 720px) {
+  .app {
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+
+  .board {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 32px 20px 24px;
+  }
+
+  .input-dock,
+  .toolbar,
+  .board,
+  .app-footer {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .input-row {
+    flex-direction: column;
+  }
+
+  .btn-primary {
+    justify-content: center;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
